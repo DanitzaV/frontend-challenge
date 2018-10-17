@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
+import {findDOMNode} from 'react-dom'
+import ReactTooltip from 'react-tooltip';
 import './Imagenes.css'
+import { stringify } from 'querystring';
 
 
 
@@ -18,11 +21,11 @@ class FetchFlickr extends Component {
 
   loadImgs() {
     fetch(
-      `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=a99004d1160f9ade6b7ad71077813a4d&tags=lady&per_page=32&page=${this.state.page}&format=json&nojsoncallback=1`
+      `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=a99004d1160f9ade6b7ad71077813a4d&tags=lady&extras=description%2Cdate_upload%2Ctags%2Cdate_taken%2Clast_update&per_page=32&page=${this.state.page}&format=json&nojsoncallback=1`
     )
       .then(res => res.json())
       .then(e => {
-        console.log(e);
+        // console.log(e);
         let stateImg = this.state.img;
         e.photos.photo.map((track) => {
           stateImg.push(track);
@@ -39,9 +42,13 @@ class FetchFlickr extends Component {
         loadMore={this.loadImgs.bind(this)}
         hasMore={this.state.hasMoreItems}
         loader={loader}>
+        <a >( •̀д•́)</a>
+
         <ResponsiveMasonry>
           <Masonry>
+         
             {this.state.img.map((e, i) => {
+              console.log(e)
               return (
                 <div style={{ padding: "7px" }}>
                   <img
@@ -51,14 +58,28 @@ class FetchFlickr extends Component {
                       display: "block",
                       marginBottom: "5px",
                     }}
+                    data-for='soclose' data-tip={e} data-event='click focus'
                     src={`https://c${e.farm}.staticflickr.com/${e.server}/${e.id}_${
                       e.secret
                       }_n.jpg`}
                   />
+                  <ReactTooltip globalEventOff='click' id='soclose'
+ getContent={(e) => {
+   let str = JSON.stringify(e);
+   
+   return  console.log('El libro: ' + str.title );
+ 
+  
+  
+  {/* return <div><h5>Title: {title} </h5><p>tags: {tags}</p></div> */}
+ }
+  } />
                 </div>
+                
               );
             })}
           </Masonry>
+         
         </ResponsiveMasonry>
       </InfiniteScroll>
 
