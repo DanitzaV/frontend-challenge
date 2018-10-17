@@ -1,5 +1,5 @@
 import React from 'react';
-import FetchFlickr from './js/components/ViewImagenes/Imagenes.';
+import FetchFlickr from './js/components/ViewImagenes/Imagenes';
 const App = () => {
   return(
     <div>
