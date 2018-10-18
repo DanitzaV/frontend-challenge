@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
-import {findDOMNode} from 'react-dom'
-import ReactTooltip from 'react-tooltip';
 import './Imagenes.css'
-import { stringify } from 'querystring';
-
+import Tooltips from './Tooltip';
 
 
 class FetchFlickr extends Component {
@@ -25,7 +22,6 @@ class FetchFlickr extends Component {
     )
       .then(res => res.json())
       .then(e => {
-        // console.log(e);
         let stateImg = this.state.img;
         e.photos.photo.map((track) => {
           stateImg.push(track);
@@ -33,6 +29,7 @@ class FetchFlickr extends Component {
         this.setState({ hasMoreItems: true, page: this.state.page + 1 });
       });
   }
+
 
   render() {
     const loader = <h2>Cargando...</h2>;
@@ -42,15 +39,12 @@ class FetchFlickr extends Component {
         loadMore={this.loadImgs.bind(this)}
         hasMore={this.state.hasMoreItems}
         loader={loader}>
-        <a >( •̀д•́)</a>
-
         <ResponsiveMasonry>
           <Masonry>
-         
+
             {this.state.img.map((e, i) => {
-              console.log(e)
               return (
-                <div style={{ padding: "7px" }}>
+                <div style={{ padding: "7px" }} >
                   <img
                     key={i}
                     style={{
@@ -58,28 +52,18 @@ class FetchFlickr extends Component {
                       display: "block",
                       marginBottom: "5px",
                     }}
-                    data-for='soclose' data-tip={e} data-event='click focus'
+
+                    data-for='soclose' data-multiline={true} data-tip={`TITLE: ${e.title},  TAGS: ${e.tags}`}
+                    data-event='click '
                     src={`https://c${e.farm}.staticflickr.com/${e.server}/${e.id}_${
                       e.secret
                       }_n.jpg`}
                   />
-                  <ReactTooltip globalEventOff='click' id='soclose'
- getContent={(e) => {
-   let str = JSON.stringify(e);
-   
-   return  console.log('El libro: ' + str.title );
- 
-  
-  
-  {/* return <div><h5>Title: {title} </h5><p>tags: {tags}</p></div> */}
- }
-  } />
+                  <Tooltips />
                 </div>
-                
               );
             })}
           </Masonry>
-         
         </ResponsiveMasonry>
       </InfiniteScroll>
 
